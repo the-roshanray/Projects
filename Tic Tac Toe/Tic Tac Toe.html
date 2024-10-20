@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tic Tac Toe</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        font-family: "Arial", sans-serif;
+      }
+      body {
+        padding: 40px;
+        background: linear-gradient(135deg, #3f2b20, #b87333);
+        text-align: center;
+        color: #fff;
+      }
+      .container {
+        height: 70vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .game {
+        height: 60vmin;
+        width: 60vmin;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5vmin;
+      }
+      .box {
+        height: 18vmin;
+        width: 18vmin;
+        border-radius: 1rem;
+        border: none;
+        box-shadow: 0 0 1rem rgba(0, 0, 0, 0.3);
+        font-size: 8vmin;
+        color: #b87333;
+        background-color: #f0e6d6;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+      .box:hover {
+        background-color: #3f2b20;
+        color: #f0e6d6;
+        transform: scale(1.05);
+      }
+      #reset-btn,
+      #new-btn {
+        height: 3rem;
+        width: 10rem;
+        font-size: 18px;
+        font-weight: 600;
+        background-color: #6b4226;
+        color: white;
+        border-radius: 15px;
+        border: none;
+        padding: 1rem;
+        cursor: pointer;
+        margin-top: 5px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+      #reset-btn:hover,
+      #new-btn:hover {
+        background-color: #b87333;
+        transform: scale(1.05);
+      }
+      #msg {
+        font-size: 6vmin;
+        font-weight: bold;
+        animation: flash 1s infinite;
+      }
+      @keyframes flash {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+      .msg-container {
+        height: 15vmin;
+      }
+      .hide {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Tic Tac Toe</h1>
+    <div class="msg-container hide">
+      <p id="msg">Winner</p>
+      <button id="new-btn">New Game</button>
+    </div>
+    <main>
+      <div class="container">
+        <div class="game">
+          <button class="box"></button>
+          <button class="box"></button>
+          <button class="box"></button>
+          <button class="box"></button>
+          <button class="box"></button>
+          <button class="box"></button>
+          <button class="box"></button>
+          <button class="box"></button>
+          <button class="box"></button>
+        </div>
+      </div>
+      <button id="reset-btn">Reset Game</button>
+    </main>
+
+    <script>
+      let boxes = document.querySelectorAll(".box");
+      let resetbtn = document.querySelector("#reset-btn");
+      let newgamebtn = document.querySelector("#new-btn");
+      let msgcontainer = document.querySelector(".msg-container");
+      let msg = document.querySelector("#msg");
+      let turnO = true;
+      let moveCount = 0;
+
+      const winning_pattern = [
+        [0, 1, 2],
+        [0, 3, 6],
+        [0, 4, 8],
+        [1, 4, 7],
+        [2, 5, 8],
+        [2, 4, 6],
+        [3, 4, 5],
+        [6, 7, 8],
+      ];
+
+      const resetgame = () => {
+        turnO = true;
+        moveCount = 0;
+        enableboxes();
+        msgcontainer.classList.add("hide");
+      };
+
+      boxes.forEach((box) => {
+        box.addEventListener("click", () => {
+          if (turnO) {
+            box.innerText = "X";
+            box.style.color = "#6b4226";
+          } else {
+            box.innerText = "O";
+            box.style.color = "#d65076";
+          }
+          box.disabled = true;
+          turnO = !turnO;
+          moveCount++;
+          check_winner();
+        });
+      });
+
+      const disableboxes = () => {
+        boxes.forEach((box) => {
+          box.disabled = true;
+        });
+      };
+
+      const enableboxes = () => {
+        boxes.forEach((box) => {
+          box.disabled = false;
+          box.innerText = "";
+        });
+      };
+
+      const show_message = (message) => {
+        msg.innerText = message;
+        msgcontainer.classList.remove("hide");
+        disableboxes();
+      };
+
+      const check_winner = () => {
+        for (let pattern of winning_pattern) {
+          let [pos1, pos2, pos3] = pattern;
+          let pos1Val = boxes[pos1].innerText;
+          let pos2Val = boxes[pos2].innerText;
+          let pos3Val = boxes[pos3].innerText;
+
+          if (pos1Val && pos1Val === pos2Val && pos2Val === pos3Val) {
+            show_message(`Congratulations, ${pos1Val} Wins!`);
+            return;
+          }
+        }
+        if (moveCount === 9) {
+          show_message("It's a Draw!");
+        }
+      };
+
+      newgamebtn.addEventListener("click", resetgame);
+      resetbtn.addEventListener("click", resetgame);
+    </script>
+  </body>
+</html>
